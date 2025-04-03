@@ -1,10 +1,10 @@
 # Run all experiments
-ROOT := /TraceAnalysis
+ROOT := .
 OUTPUT := $(ROOT)/output
 # OUTPUT := $(ROOT)/tracerca-exp/data/dockeroutput
 # ORIGIN_DATA_DIR := $(ROOT)/tracerca-exp/data/
-ORIGIN_DATA_DIR := $(ROOT)/tracerca-exp/data/
-ROOT_CAUSE_DIR := $(ORIGIN_DATA_DIR)/root_causes/
+ORIGIN_DATA_DIR := $(ROOT)/tracerca-exp/data
+ROOT_CAUSE_DIR := $(ORIGIN_DATA_DIR)/root_causes
 SCRIPT_DIR := $(ROOT)/tracerca-exp
 CONFIG_SCRIPTS := $(ROOT)/tracerca-exp/trainticket_config.py
 UPDATE_CACHE_FLAG :=
@@ -38,10 +38,8 @@ TRACE_HISTORICAL_DATA = $(OUTPUT)/trainticket_trace_encoded/trainticket_historic
 INVO_HISTORICAL_DATA = $(OUTPUT)/trainticket_invo_encoded/trainticket_historical_normal.invo.pkl
 
 ASSOCIATION_RULE_MINING_TEST_FILE_RESULTS = $(addprefix $(OUTPUT)/trainticket_root_cause_localization/,$(addsuffix .association_rule_mining.result.pkl.$(SUPPORT).$(K),$(basename $(notdir $(TEST_FILES)))))
-PAGERANK_TEST_FILE_RESULTS = $(addprefix $(OUTPUT)/trainticket_root_cause_localization/,$(addsuffix .pagerank.result.pkl,$(basename $(notdir $(TEST_FILES)))))
-MEPFL_TEST_FILE_RESULTS = $(addprefix $(OUTPUT)/trainticket_root_cause_localization/,$(addsuffix .MEPFL.result.pkl.$(DROP_SERVICE).$(DROP_FAULT_TYPE),$(basename $(notdir $(TEST_FILES)))))
-RCSF_TEST_FILE_RESULTS = $(addprefix $(OUTPUT)/trainticket_root_cause_localization/,$(addsuffix .RCSF.result.pkl,$(basename $(notdir $(TEST_FILES)))))
-MICROSCOPE_TEST_FILE_RESULTS = $(addprefix $(OUTPUT)/trainticket_root_cause_localization/,$(addsuffix .microscope.result.pkl,$(basename $(notdir $(TEST_FILES)))))
+# PAGERANK_TEST_FILE_RESULTS = $(addprefix $(OUTPUT)/trainticket_root_cause_localization/,$(addsuffix .pagerank.result.pkl,$(basename $(notdir $(TEST_FILES)))))
+# MICROSCOPE_TEST_FILE_RESULTS = $(addprefix $(OUTPUT)/trainticket_root_cause_localization/,$(addsuffix .microscope.result.pkl,$(basename $(notdir $(TEST_FILES)))))
 LOCALIZATION_MODEL = $(OUTPUT)/trainticket_localization.models.$(DROP_SERVICE).$(DROP_FAULT_TYPE)
 
 ASSOCIATION_RULE_MINING_TEST_FILE_RESULTS_EFFECT_OF_TRACE = $(addprefix $(OUTPUT)/trainticket_root_cause_localization/,$(addsuffix _effect_of_trace_type1.association_rule_mining.result.pkl.$(SUPPROT),$(basename $(notdir $(TEST_FILES)))))
@@ -128,21 +126,11 @@ $(ORIGIN_DATA_DIR)/all/trainticket_historical_all.pkl: $(ALL_TRAIN_FILES) $(SCRI
 	python run_concatenate.py $(addprefix -i ",$(addsuffix ",$(ALL_TRAIN_FILES))) -o $@ --add-root-cause
 
 # ROOT CAUSE  LOCALIZATION
-$(FAULT_LOCALIZATION_RESULT): $(ASSOCIATION_RULE_MINING_TEST_FILE_RESULTS) $(PAGERANK_TEST_FILE_RESULTS) $(MEPFL_TEST_FILE_RESULTS) $(MICROSCOPE_TEST_FILE_RESULTS) $(RCSF_TEST_FILE_RESULTS) $(SCRIPT_DIR)/run_localization_collect.py
+$(FAULT_LOCALIZATION_RESULT): $(ASSOCIATION_RULE_MINING_TEST_FILE_RESULTS) $(SCRIPT_DIR)/run_localization_collect.py
 	python run_localization_collect.py \
 		$(addprefix -i ",$(addsuffix ",$(ASSOCIATION_RULE_MINING_TEST_FILE_RESULTS))) \
-		$(addprefix -i ",$(addsuffix ",$(MEPFL_TEST_FILE_RESULTS))) \
-		$(addprefix -i ",$(addsuffix ",$(PAGERANK_TEST_FILE_RESULTS))) \
-		$(addprefix -i ",$(addsuffix ",$(RCSF_TEST_FILE_RESULTS))) \
-        $(addprefix -i ",$(addsuffix ",$(MICROSCOPE_TEST_FILE_RESULTS))) \
         -r $(ROOT_CAUSE_DIR) \
 		-o $@
-
-#$(FAULT_LOCALIZATION_RESULT): $(MEPFL_TEST_FILE_RESULTS) $(SCRIPT_DIR)/run_localization_collect.py
-#	python run_localization_collect.py \
-#		$(addprefix -i ",$(addsuffix ",$(MEPFL_TEST_FILE_RESULTS))) \
-#        -r $(ROOT_CAUSE_DIR) \
-#		-o $@
 
 $(EFFECT_OF_TRACE_LOCALIZATION_RESULT): $(SCRIPT_DIR)/run_effect_of_trace_localization_collect.py
 	python run_effect_of_trace_localization_collect.py -o $(EFFECT_OF_TRACE_LOCALIZATION_RESULT)
@@ -154,22 +142,13 @@ $(OUTPUT)/trainticket_anomaly_detection.test/%_effect_of_trace_type1.invo.result
 $(LOCALIZATION_MODEL): $(TRACE_HISTORICAL_DATA) $(SCRIPT_DIR)/run_localization_prepare_model.py
 	python run_localization_prepare_model.py -t $(word 1,$^) -o $@
 
-$(OUTPUT)/trainticket_root_cause_localization/%.association_rule_mining.result.pkl.$(SUPPORT).$(K):$(OUTPUT)/trainticket_anomaly_detection.test/%.invo.result.pkl.$(SIGMA).$(FISHER) $(SCRIPT_DIR)/run_localization_association_rule_mining.py $(shell ls $(SCRIPT_DIR)/association_rule_mining/*.py) $(CONFIG_SCRIPTS)
-	python run_localization_association_rule_mining.py -i $(word 1,$^) -o $@ \
+$(OUTPUT)/trainticket_root_cause_localization/%.association_rule_mining.result.pkl.$(SUPPORT).$(K):$(OUTPUT)/trainticket_anomaly_detection.test/%.invo.result.pkl.$(SIGMA).$(FISHER) $(SCRIPT_DIR)/run_localization_association_rule_mining_20210516.py $(shell ls $(SCRIPT_DIR)/association_rule_mining/*.py) $(CONFIG_SCRIPTS)
+	python run_localization_association_rule_mining_20210516.py -i $(word 1,$^) -o $@ \
 		--min-support-rate $(SUPPORT) --quiet --k $(K)
 
-$(OUTPUT)/trainticket_root_cause_localization/%.pagerank.result.pkl:$(OUTPUT)/trainticket_anomaly_detection.test/%.invo.result.pkl.$(SIGMA).$(FISHER) $(SCRIPT_DIR)/run_localization_pagerank.py
-	python run_localization_pagerank.py -i $(word 1,$^) -o $@
+# $(OUTPUT)/trainticket_root_cause_localization/%.pagerank.result.pkl:$(OUTPUT)/trainticket_anomaly_detection.test/%.invo.result.pkl.$(SIGMA).$(FISHER) $(SCRIPT_DIR)/run_localization_pagerank.py
+#	python run_localization_pagerank.py -i $(word 1,$^) -o $@
     
-$(OUTPUT)/trainticket_root_cause_localization/%.RCSF.result.pkl:$(OUTPUT)/trainticket_anomaly_detection.test/%.invo.result.pkl.$(SIGMA).$(FISHER) $(SCRIPT_DIR)/run_localization_RCSF.py
-	python run_localization_RCSF.py -i $(word 1,$^) -o $@
-
-$(OUTPUT)/trainticket_root_cause_localization/%.MEPFL.result.pkl.$(DROP_SERVICE).$(DROP_FAULT_TYPE):$(OUTPUT)/trainticket_trace_encoded/%.trace.$(DROP_SERVICE).$(DROP_FAULT_TYPE).npz $(LOCALIZATION_MODEL) $(SCRIPT_DIR)/run_localization_MEPFL.py
-	python run_localization_MEPFL.py -i $(word 1,$^) -o $@ -c $(word 2,$^)
-
-$(OUTPUT)/trainticket_root_cause_localization/%.microscope.result.pkl:$(OUTPUT)/trainticket_anomaly_detection.test/%.invo.result.pkl.$(SIGMA).$(FISHER) $(SCRIPT_DIR)/run_localization_microscope.py
-	python run_localization_microscope.py -i $(word 1,$^) -o $@
-
 .PHONY: clean
 clean: clean-cache clean-debug
 	rm $(ANOMALY_DETECTION_RESULT) || echo OK

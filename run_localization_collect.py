@@ -1,13 +1,14 @@
+import ast
 import pickle
 from itertools import product
-from typing import List, Set
 from pathlib import Path
+from typing import List, Set
+
 import click
 import pandas as pd
 from loguru import logger
-import ast
-from tqdm import tqdm
 from numba import jit
+from tqdm import tqdm
 
 from data.trainticket.download import simple_name
 from trainticket_config import INVOLVED_SERVICES
