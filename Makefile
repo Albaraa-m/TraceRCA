@@ -74,9 +74,9 @@ dataset-summary: $(addprefix $(OUTPUT)/trainticket_trace_encoded/,$(addsuffix .t
 
 .PHONY: prepare-all-files
 prepare-all-files:
-	mkdir $(ORIGIN_DATA_DIR)/all/ || echo exists
-#	rm $(ORIGIN_DATA_DIR)/all/*.pkl || echo OK
-	ln -sf $(ORIGIN_DATA_DIR)/test/* $(ORIGIN_DATA_DIR)/all/
+	mkdir -p $(ORIGIN_DATA_DIR)/all/ || echo exists
+#	rm -f $(ORIGIN_DATA_DIR)/all/*.pkl || echo OK
+	cd $(ORIGIN_DATA_DIR)/all && ln -sf ../test/*.pkl .
 
 
 .PHONY: debug
