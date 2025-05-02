@@ -5,13 +5,15 @@ from pathlib import Path
 
 def extract_service_from_filename(filename):
     # Handle special cases with '+'
-    if '+' in filename:
-        # For files like 'user+verification-code_cpu_1021.pkl'
-        # Take all services before the underscore
-        service = filename.split('_')[0]
-        return service.split('+')
+    # if '+' in filename:
+    #     # For files like 'user+verification-code_cpu_1021.pkl'
+    #     # Take all services before the underscore
+    #     service = filename.split('_')[0]
+    #     return service.split('+')
     
-    # Regular case: service name is everything before first underscore
+    # # Regular case: service name is everything before first underscore
+    # service = filename.split('_')[0]
+    # return [service]
     service = filename.split('_')[0]
     return [service]
 

@@ -19,10 +19,10 @@ ALL_TRAIN_FILES = $(NORMAL_TRAIN_FILES) $(ABNORMAL_TRAIN_FILES)
 # hyperparameters
 DROP_SERVICE = 0
 DROP_FAULT_TYPE = 0
-SUPPORT = 0.1
+SUPPORT = 0.01
 SIGMA = 1
 FISHER = 3
-K = 100
+K = 50
 
 
 INVO_TEST_FILE_RESULTS = $(addprefix $(OUTPUT)/trainticket_anomaly_detection.test/,$(addsuffix .invo.result.pkl.$(SIGMA).$(FISHER),$(basename $(notdir $(TEST_FILES)))))

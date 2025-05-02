@@ -1,16 +1,16 @@
+import pickle
 import sys
-from typing import Dict, Tuple, List
-import numpy as np
+from pathlib import Path
+from typing import Dict, List, Tuple
 
 import click
-import pickle
+import numpy as np
 import pandas as pd
-from pathlib import Path
 from loguru import logger
 from tqdm import tqdm
 
 from data.trainticket.download import simple_name
-from trainticket_config import *
+from hotelreservation_config import *
 
 """
 Encode train-ticket pickle data into trace-level data and label:

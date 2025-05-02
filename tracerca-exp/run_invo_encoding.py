@@ -1,15 +1,14 @@
+import pickle
 import sys
+from pathlib import Path
 from typing import Dict, Tuple
-import numpy as np
 
 import click
-import pickle
+import numpy as np
 import pandas as pd
-from pathlib import Path
 from loguru import logger
 
-from data.trainticket.download import simple_name
-from trainticket_config import *
+from hotelreservation_config import *
 
 """
 Encode train-ticket pickle data into data frame of invocations:
@@ -57,8 +56,8 @@ def train_ticket_invo_encoding_main(input_file: str, output_file: str):
                     trace[key] = np.asarray(item)[indices]
                 except IndexError:
                     raise RuntimeError(f"{key} {item} {indices}")
-        data['source'].extend(list(simple_name(_[0]) for _ in trace['s_t']))
-        data['target'].extend(list(simple_name(_[1]) for _ in trace['s_t']))
+        data['source'].extend(list(_[0] for _ in trace['s_t']))
+        data['target'].extend(list(_[1] for _ in trace['s_t']))
 
         if ENABLE_ALL_FEATURES:
             data['start_timestamp'].extend(_ / 1e6 for _ in trace['timestamp'])
@@ -67,7 +66,7 @@ def train_ticket_invo_encoding_main(input_file: str, output_file: str):
             data['trace_end_timestamp'].extend(max(trace['endtime']) / 1e6 for _ in trace['endtime'])
             data['trace_label'].extend(trace['label'] for _ in trace['s_t'])
             data['trace_id'].extend(trace['trace_id'] for _ in trace['s_t'])
-            data['latency'].extend(_ / 1e6 for _ in trace['latency'])
+            data['latency'].extend(_ * 1e6 for _ in trace['latency'])
             data['cpu_use'].extend(_ * 1e-2 for _ in trace['cpu_use'])
             data['mem_use_percent'].extend(_ / 1e2 for _ in trace['mem_use_percent'])  #
             data['mem_use_amount'].extend(_ / 1e12 for _ in trace['mem_use_amount'])  # 1000MB disabled
@@ -83,7 +82,8 @@ def train_ticket_invo_encoding_main(input_file: str, output_file: str):
             data['trace_end_timestamp'].extend(max(trace['endtime']) for _ in trace['endtime'])
             data['trace_label'].extend(trace['label'] for _ in trace['s_t'])
             data['trace_id'].extend(trace['trace_id'] for _ in trace['s_t'])
-            data['latency'].extend(_ for _ in trace['latency'])
+            data['latency'].extend(_ * 1e6 for _ in trace['latency'])
+            #data['latency'].extend(_ for _ in trace['latency'])
             data['http_status'].extend(int(_) // 100 if _ != 0 else 9 for _ in trace['http_status'])
 
     df = pd.DataFrame.from_dict(
