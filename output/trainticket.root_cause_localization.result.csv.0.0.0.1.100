@@ -1,0 +1,26 @@
+filename,method,metric_value,metric_name
+reservation,Ours-noise=0,1.0,MAR
+reservation,Ours-noise=0,1.0,MFR
+reservation,Ours-noise=0,1.0,Top-1 Accuracy
+reservation,Ours-noise=0,1.0,Top-2 Accuracy
+reservation,Ours-noise=0,1.0,Top-3 Accuracy
+reservation_2,Ours-noise=0,1.0,MAR
+reservation_2,Ours-noise=0,1.0,MFR
+reservation_2,Ours-noise=0,1.0,Top-1 Accuracy
+reservation_2,Ours-noise=0,1.0,Top-2 Accuracy
+reservation_2,Ours-noise=0,1.0,Top-3 Accuracy
+reservation_3,Ours-noise=0,1.0,MAR
+reservation_3,Ours-noise=0,1.0,MFR
+reservation_3,Ours-noise=0,1.0,Top-1 Accuracy
+reservation_3,Ours-noise=0,1.0,Top-2 Accuracy
+reservation_3,Ours-noise=0,1.0,Top-3 Accuracy
+reservation_4,Ours-noise=0,1.0,MAR
+reservation_4,Ours-noise=0,1.0,MFR
+reservation_4,Ours-noise=0,1.0,Top-1 Accuracy
+reservation_4,Ours-noise=0,1.0,Top-2 Accuracy
+reservation_4,Ours-noise=0,1.0,Top-3 Accuracy
+reservation_5,Ours-noise=0,1.0,MAR
+reservation_5,Ours-noise=0,1.0,MFR
+reservation_5,Ours-noise=0,1.0,Top-1 Accuracy
+reservation_5,Ours-noise=0,1.0,Top-2 Accuracy
+reservation_5,Ours-noise=0,1.0,Top-3 Accuracy
